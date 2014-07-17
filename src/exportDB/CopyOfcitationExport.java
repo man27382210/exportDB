@@ -125,7 +125,7 @@ public class CopyOfcitationExport {
 //		select `CitationId` from `References` GROUP BY `CitationId` 
 		init();
 		ArrayList paperArray = new ArrayList();
-		paperArray = get("312565");
+		paperArray = getInverse("312565");
 //		paperArray = jsonArray;
 		for (int i = 0; i<paperArray.size();i++){
 			ArrayList firstRef = get(String.valueOf(paperArray.get(i)));

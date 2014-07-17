@@ -21,7 +21,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
-public class CopyOfcitationExport {
+public class dbExport {
 	static HashMap hashUse = new HashMap();
 	static Connection conn = null;
 	static Statement st = null;
@@ -29,7 +29,7 @@ public class CopyOfcitationExport {
 	static JSONParser parser = new JSONParser();
 	static ArrayList jsonArray = new ArrayList();
 	static public void init(){
-//		readFromJson("");
+		readFromJson("");
 		try{
 			String usr = "cite";
 			String pwd = "rb303";
@@ -41,29 +41,14 @@ public class CopyOfcitationExport {
 			
 			MongoClient mongoClient = new MongoClient("114.34.79.27",27017);
 			DB db = mongoClient.getDB( "paperMiningTest" );
-			coll = db.getCollection("paperRefRelationSimple");
+			coll = db.getCollection("paperRefRelation");
 			
 		}catch(Exception e){
 			System.out.println(e);
 		}
 		
 	}
-
 	static public ArrayList getPaper(String queryStr){
-		ArrayList returnArray = new ArrayList();
-		try{
-//			st.execute(String.format("SELECT `ReferenceId` FROM `References` WHERE `CitationId` = '%d'", 1));
-			st.execute(queryStr);
-			ResultSet rs = st.getResultSet();
-			while(rs.next()){
-				returnArray.add(rs.getString("CitationId"));
-			}
-		}catch(Exception e){
-			System.out.println(e);
-		}
-		return returnArray;
-	}
-	static public ArrayList getPaperInverse(String queryStr){
 		ArrayList returnArray = new ArrayList();
 		try{
 //			st.execute(String.format("SELECT `ReferenceId` FROM `References` WHERE `CitationId` = '%d'", 1));
@@ -83,22 +68,8 @@ public class CopyOfcitationExport {
 		if(hashUse.containsKey(id)){
 			idCatitionArray = (ArrayList) hashUse.get(id);
 		}else{
-			String str = String.format("SELECT `CitationId` FROM `References` WHERE `ReferenceId` = '%s'", id);
-			idCatitionArray = getPaper(str);
-			hashUse.put(id, idCatitionArray);
-		}
-		System.out.println(idCatitionArray);
-		return idCatitionArray;
-	}
-	
-	//SELECT `CitationId` FROM `References` WHERE `ReferenceId` = '488'
-	static public ArrayList getInverse(String id){
-		ArrayList idCatitionArray = new ArrayList();
-		if(hashUse.containsKey(id)){
-			idCatitionArray = (ArrayList) hashUse.get(id);
-		}else{
 			String str = String.format("SELECT `ReferenceId` FROM `References` WHERE `CitationId` = '%s'", id);
-			idCatitionArray = getPaperInverse(str);
+			idCatitionArray = getPaper(str);
 			hashUse.put(id, idCatitionArray);
 		}
 		System.out.println(idCatitionArray);
@@ -125,8 +96,7 @@ public class CopyOfcitationExport {
 //		select `CitationId` from `References` GROUP BY `CitationId` 
 		init();
 		ArrayList paperArray = new ArrayList();
-		paperArray = get("312565");
-//		paperArray = jsonArray;
+		paperArray = jsonArray;
 		for (int i = 0; i<paperArray.size();i++){
 			ArrayList firstRef = get(String.valueOf(paperArray.get(i)));
 			for (int j = i+1; j< paperArray.size();j++){

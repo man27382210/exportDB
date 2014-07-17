@@ -41,7 +41,7 @@ public class dbExport {
 			
 			MongoClient mongoClient = new MongoClient("114.34.79.27",27017);
 			DB db = mongoClient.getDB( "paperMiningTest" );
-			coll = db.getCollection("paperRefRelation");
+			coll = db.getCollection("paperRefArray");
 			
 		}catch(Exception e){
 			System.out.println(e);
@@ -83,6 +83,13 @@ public class dbExport {
 		coll.save(bo);
 		System.out.println(bo);
 	}
+	static public void saveToMongod2(String id, ArrayList refArray){
+		BasicDBObject bo = new BasicDBObject();
+		bo.put("IndexId", id);
+		bo.put("ReferenceId", refArray);
+		coll.save(bo);
+		System.out.println(bo);
+	}
 	static public void readFromJson(String path){
 		try {
 			JSONObject a = (JSONObject) parser.parse(new FileReader("/Users/man27382210/Documents/workspace/exportDB/paperId.json"));
@@ -95,21 +102,27 @@ public class dbExport {
 		// TODO Auto-generated method stub
 //		select `CitationId` from `References` GROUP BY `CitationId` 
 		init();
+		
 		ArrayList paperArray = new ArrayList();
+//		refPaperArray = getPaper("SELECT `ReferenceId` FROM `References` WHERE `CitationId` = '%s'");
 		paperArray = jsonArray;
 		for (int i = 0; i<paperArray.size();i++){
-			ArrayList firstRef = get(String.valueOf(paperArray.get(i)));
-			for (int j = i+1; j< paperArray.size();j++){
-				ArrayList secRef = get(String.valueOf(paperArray.get(j)));
-				ArrayList resultArray = firstRef;
-				resultArray.retainAll(secRef);
-				System.out.println(String.valueOf(paperArray.get(i)));
-				System.out.println(String.valueOf(paperArray.get(j)));
-				System.out.println(resultArray);
-				System.out.println("");
-				saveToMongod(String.valueOf(paperArray.get(i)), String.valueOf(paperArray.get(j)), resultArray);
-			}
+			ArrayList saveRef = get(String.valueOf(paperArray.get(i)));
+			saveToMongod2(String.valueOf(paperArray.get(i)), saveRef);
 		}
+//		for (int i = 0; i<paperArray.size();i++){
+//			ArrayList firstRef = get(String.valueOf(paperArray.get(i)));
+//			for (int j = i+1; j< paperArray.size();j++){
+//				ArrayList secRef = get(String.valueOf(paperArray.get(j)));
+//				ArrayList resultArray = firstRef;
+//				resultArray.retainAll(secRef);
+//				System.out.println(String.valueOf(paperArray.get(i)));
+//				System.out.println(String.valueOf(paperArray.get(j)));
+//				System.out.println(resultArray);
+//				System.out.println("");
+//				saveToMongod(String.valueOf(paperArray.get(i)), String.valueOf(paperArray.get(j)), resultArray);
+//			}
+//		}
 	}
 
 }

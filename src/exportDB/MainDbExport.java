@@ -72,8 +72,12 @@ public class MainDbExport {
 	}
 	static public void saveToMongod(Map mapUse){
 		BasicDBObject bo = new BasicDBObject(mapUse);
-		coll.save(bo);
-		System.out.println(bo);
+		try{
+			coll.save(bo);
+			System.out.println(bo);
+		}catch(Exception e){
+			System.out.println(e);
+		}
 	}
 	static public void readFromJson(String path){
 		try {
